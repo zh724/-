@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi, I'm a Geek! | 极客玩家 - 花の精神世界</title>
+    <style>
+        /* 基础重置与星空背景 (沿用前一个版本) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* --- 背景设置入口 --- */
+            /* 如果不需要背景图，注释掉下面这行即可显示纯色星空 */
+            --bg-image: url('background.jpg'); 
+
+            /* 深邃星空保底色 */
+            --bg-fallback: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, "PingFang SC", sans-serif;
+            color: white;
+            overflow: hidden; /* 防止流星溢出滚动条 */
+            
+            /* 核心：优先使用背景图，图片加载失败时使用保底色 */
+            background: var(--bg-image), var(--bg-fallback);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* --- 流星特效 (沿用前一个版本) --- */
+        .night {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotateZ(45deg); /* 让流星倾斜落下 */
+            z-index: 0; /* 放在最底层 */
+            pointer-events: none; /* 防止遮挡卡片点击 */
+        }
+
+        .shooting-star {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            height: 2px;
+            background: linear-gradient(-45deg, #5f91ff, rgba(0, 0, 255, 0));
+            border-radius: 999px;
+            filter: drop-shadow(0 0 6px #699bff);
+            animation: tail 3000ms ease-in-out infinite, shooting 3000ms ease-in-out infinite;
+            opacity: 0;
+        }
+
+        .shooting-star::before, .shooting-star::after {
+            content: '';
+            position: absolute;
+            top: calc(50% - 1px);
+            right: 0;
+            height: 2px;
+            background: linear-gradient(-45deg, rgba(0, 0, 255, 0), #5f91ff, rgba(0, 0, 255, 0));
+            transform: translateX(50%) rotateZ(45deg);
+            border-radius: 100%;
+            animation: shining 3000ms ease-in-out infinite;
+        }
+
+        .shooting-star::after {
+            transform: translateX(50%) rotateZ(-45deg);
+        }
+
+        /* 定义流星动画关键帧 */
+        @keyframes tail {
+            0% { width: 0; opacity: 0; }
+            30% { width: 100px; opacity: 1; }
+            100% { width: 0; opacity: 0; }
+        }
+
+        @keyframes shining {
+            0% { width: 0; }
+            50% { width: 30px; }
+            100% { width: 0; }
+        }
+
+        @keyframes shooting {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(300px); }
+        }
+
+        /* 为多颗流星设置不同的位置和延迟 */
+        .shooting-star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0ms; }
+        .shooting-star:nth-child(2) { top: 30%; left: 40%; animation-delay: 1500ms; }
+        .shooting-star:nth-child(3) { top: 50%; left: 10%; animation-delay: 2400ms; }
+        .shooting-star:nth-child(4) { top: 20%; left: 80%; animation-delay: 4000ms; }
+        .shooting-star:nth-child(5) { top: 70%; left: 60%; animation-delay: 5500ms; }
+        /* --- 流星特效结束 --- */
+
+        /* --- 个人卡片开始 (完全还原图0布局) --- */
+        .main-card {
+            position: relative;
+            z-index: 10; /* 放在流星上方 */
+            background: rgba(255, 255, 255, 0.08); /* 极低不透明度白色，营造高级玻璃感 */
+            backdrop-filter: blur(25px); /* 强化高斯模糊，让背景星空变得柔和 */
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15); /* 细微边框增强通透感 */
+            border-radius: 30px;
+            padding: 50px 40px;
+            width: 320px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        /* 鼠标悬停卡片时的微交互 */
+        .main-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.5);
+            border-color: rgba(105, 155, 255, 0.3);
+        }
+
+        /* 头像与缓慢转动动画 */
+        .avatar-box {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid #3498db; /* 还原图0的蓝色边框 */
+            padding: 4px; /* 增加内边距让头像不显得局促 */
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+            
+            /* 核心：添加头像缓慢旋转动画 */
+            animation: rotateAvatar 25s linear infinite; /* 25秒一圈，线性（匀速）旋转，无限循环 */
+        }
+
+        @keyframes rotateAvatar {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 5px; right: 5px;
+            width: 18px; height: 18px;
+            background: #2ecc71; /* 还原图0的绿色在线状态 */
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+
+        /* 终端文本区 */
+        .terminal-panel {
+            background: rgba(0, 0, 0, 0.6); /* 还原图0的深色背景 */
+            border-radius: 12px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 30px;
+            font-size: 13px;
+            color: #ddd;
+            line-height: 1.6;
+            font-family: 'Courier New', Courier, monospace; /* 增加终端代码感 */
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .cmd-prompt { color: var(--term-green); font-weight: bold; }
+        .cmd-output { color: #81ecec; } /* 终端文本蓝色 */
+
+        /* 使用 CSS 变量方便后期换色 */
+        :root {
+            --term-green: #00ff00;
+            --accent-color: #3498db;
+        }
+
+        /* 底部联系区 (还原图0的QQ号，并添加跳转功能) */
+        .contact-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1); /* 底部小卡片也做玻璃感 */
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-size: 14px;
+            color: #ddd;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .contact-box:hover {
+            background: var(--accent-color);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .contact-box img {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7; /* 底部图标微调 */
+        }
+
+        /* 鼠标悬停时的图标联动 */
+        .contact-box:hover img {
+            filter: brightness(100);
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="night">
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+    </div>
+
+    <div class="main-card">
+        <div class="avatar-box">
+            <img src="https://q1.qlogo.cn/g?b=qq&nk=2085794436&s=640" alt="Avatar" class="avatar">
+            <div class="status-badge"></div>
+        </div>
+
+        <div class="terminal-panel">
+            <div><span class="cmd-prompt">visitor@geek_station:~$</span> bio --all</div>
+            <div class="cmd-output">> identity: 衰小孩/小樱花</div>
+            <div class="cmd-output">> location: 中国🇨🇳</div>
+            <div class="cmd-output">> bio: 明辨是非，独立思考</div>
+        </div>
+
+        <a href="mqqwpa://im/chat?chat_type=wpa&uin=2085794436&version=1&src_type=web&web_src=oicqzone.com" class="contact-box">
+            <svg t="1646733221946" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2292" width="16" height="16"><path d="M824.8 613.2c-16-19.6-33.6-31.2-46-33.6-4.8 0-7.2-1.2-7.2-1.2l-1.6-0.8 1.6-1.2c50.8-37.2 92-111.6 92-192.8 0-111.6-96-202-214.4-202S434.8 272 434.8 383.6c0 80.8 41.2 154.8 91.6 192.4l1.6 1.2-1.6 0.8s-2.4 1.2-7.2 1.2c-12 2.8-29.2 14.4-44.8 33.6C361.2 751.2 170.8 726 170.8 726c-10 0-20.8 7.2-24.8 16.4-4 9.2-1.2 20.4 6 28 0 0 128.8 135.2 360.8 135.2s360.8-135.2 360.8-135.2c7.2-7.6 10-18.8 6-28-4-9.2-14.8-16.4-24.8-16.4 0 0-190.4 25.2-304.8-112.8z" p-id="2293" fill="currentColor"></path></svg>
+            2085794436
+        </a>
+    </div>
+
+</body>
+</html>
