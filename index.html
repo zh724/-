@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi, I'm a Geek! | 极客玩家 - 花の精神世界</title>
+    <style>
+        /* 基础重置与星空背景 (沿用前一个版本) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* --- 背景设置入口 --- */
+            /* 如果不需要背景图，注释掉下面这行即可显示纯色星空 */
+            --bg-image: url('background.jpg'); 
+
+            /* 深邃星空保底色 */
+            --bg-fallback: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, "PingFang SC", sans-serif;
+            color: white;
+            overflow: hidden; /* 防止流星溢出滚动条 */
+            
+            /* 核心：优先使用背景图，图片加载失败时使用保底色 */
+            background: var(--bg-image), var(--bg-fallback);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* --- 流星特效 (沿用前一个版本) --- */
+        .night {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotateZ(45deg); /* 让流星倾斜落下 */
+            z-index: 0; /* 放在最底层 */
+            pointer-events: none; /* 防止遮挡卡片点击 */
+        }
+
+        .shooting-star {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            height: 2px;
+            background: linear-gradient(-45deg, #5f91ff, rgba(0, 0, 255, 0));
+            border-radius: 999px;
+            filter: drop-shadow(0 0 6px #699bff);
+            animation: tail 3000ms ease-in-out infinite, shooting 3000ms ease-in-out infinite;
+            opacity: 0;
+        }
+
+        .shooting-star::before, .shooting-star::after {
+            content: '';
+            position: absolute;
+            top: calc(50% - 1px);
+            right: 0;
+            height: 2px;
+            background: linear-gradient(-45deg, rgba(0, 0, 255, 0), #5f91ff, rgba(0, 0, 255, 0));
+            transform: translateX(50%) rotateZ(45deg);
+            border-radius: 100%;
+            animation: shining 3000ms ease-in-out infinite;
+        }
+
+        .shooting-star::after {
+            transform: translateX(50%) rotateZ(-45deg);
+        }
+
+        /* 定义流星动画关键帧 */
+        @keyframes tail {
+            0% { width: 0; opacity: 0; }
+            30% { width: 100px; opacity: 1; }
+            100% { width: 0; opacity: 0; }
+        }
+
+        @keyframes shining {
+            0% { width: 0; }
+            50% { width: 30px; }
+            100% { width: 0; }
+        }
+
+        @keyframes shooting {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(300px); }
+        }
+
+        /* 为多颗流星设置不同的位置和延迟 */
+        .shooting-star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0ms; }
+        .shooting-star:nth-child(2) { top: 30%; left: 40%; animation-delay: 1500ms; }
+        .shooting-star:nth-child(3) { top: 50%; left: 10%; animation-delay: 2400ms; }
+        .shooting-star:nth-child(4) { top: 20%; left: 80%; animation-delay: 4000ms; }
+        .shooting-star:nth-child(5) { top: 70%; left: 60%; animation-delay: 5500ms; }
+        /* --- 流星特效结束 --- */
+
+        /* --- 个人卡片开始 (完全还原图0布局) --- */
+        .main-card {
+            position: relative;
+            z-index: 10; /* 放在流星上方 */
+            background: rgba(255, 255, 255, 0.08); /* 极低不透明度白色，营造高级玻璃感 */
+            backdrop-filter: blur(25px); /* 强化高斯模糊，让背景星空变得柔和 */
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15); /* 细微边框增强通透感 */
+            border-radius: 30px;
+            padding: 50px 40px;
+            width: 320px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        /* 鼠标悬停卡片时的微交互 */
+        .main-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.5);
+            border-color: rgba(105, 155, 255, 0.3);
+        }
+
+        /* 头像与缓慢转动动画 */
+        .avatar-box {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid #3498db; /* 还原图0的蓝色边框 */
+            padding: 4px; /* 增加内边距让头像不显得局促 */
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+            
+            /* 核心：添加头像缓慢旋转动画 */
+            animation: rotateAvatar 25s linear infinite; /* 25秒一圈，线性（匀速）旋转，无限循环 */
+        }
+
+        @keyframes rotateAvatar {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 5px; right: 5px;
+        
